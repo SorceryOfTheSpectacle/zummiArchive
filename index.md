@@ -6,9 +6,9 @@ In the interest of preservation it is now also mirrored here based on the captur
 
 * [Every Single One of Zummi's Posts (Web Archive)(Posted On Pastebin 2014-04-23)](http://web.archive.org/web/20190606033621/https://pastebin.com/dtNG4LKg)
 
-* [https://www.reddit.com/r/sorceryofthespectacle](Original Subreddit For Sorcery Of The Spectacle that Zummi created)
+* [Original Subreddit For Sorcery Of The Spectacle that Zummi created](https://www.reddit.com/r/sorceryofthespectacle)
 
-* [https://www.reddit.com/r/zummi](Cult of Zummi)
+* [Cult of Zummi](https://www.reddit.com/r/zummi)
 
 If you are interested in contributing to this archive, then post to [this issue tracker](https://github.com/SorceryOfTheSpectacle/zummiArchive/issues) to request access, or send a pull request.
 
