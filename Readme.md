@@ -1,5 +1,7 @@
 # Zummi Archive
 
+This repository's page https://sorceryofthespectacle.github.io/zummiArchive/
+
 https://www.reddit.com/r/zummi/
 
 https://www.reddit.com/r/sorceryofthespectacle/
