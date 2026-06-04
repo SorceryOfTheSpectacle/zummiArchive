@@ -1,0 +1,54 @@
+<style>
+  /* Wayback Machine companion links */
+  .wayback-link {
+    font-size: 0.65em;
+    color: #aaa;
+    text-decoration: none;
+    margin-left: 3px;
+    font-family: monospace;
+    white-space: nowrap;
+  }
+  .wayback-link::before { content: '['; }
+  .wayback-link::after  { content: ']'; }
+  .wayback-link:hover   { color: #555; text-decoration: underline; }
+</style>
+
+<script defer>
+(function () {
+  // Domains that are stable or where Wayback adds no value
+  var SKIP = [
+    'web.archive.org',
+    'reddit.com',
+    'github.com',
+    'youtube.com',
+    'youtu.be',
+    'sorceryofthespectacle.github.io',
+  ];
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var content = document.querySelector('article') ||
+                  document.querySelector('.post-content') ||
+                  document.querySelector('main');
+    if (!content) return;
+
+    content.querySelectorAll('a[href^="http"]').forEach(function (link) {
+      try {
+        var host = new URL(link.href).hostname;
+        if (SKIP.some(function (d) { return host === d || host.endsWith('.' + d); })) return;
+        // Skip if we already added one (idempotent)
+        if (link.nextSibling && link.nextSibling.classList &&
+            link.nextSibling.classList.contains('wayback-link')) return;
+
+        var a = document.createElement('a');
+        a.href = 'https://web.archive.org/web/*/' + link.href;
+        a.textContent = 'archived';
+        a.className = 'wayback-link';
+        a.title = 'View captures of this URL on the Wayback Machine';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        link.insertAdjacentElement('afterend', a);
+      } catch (e) {}
+    });
+  });
+}());
+</script>
