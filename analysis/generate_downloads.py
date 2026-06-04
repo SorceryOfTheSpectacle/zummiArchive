@@ -34,7 +34,8 @@ ABOUT = (
     "Zummi eventually stepped back from moderation and publicly distanced himself from the "
     "subreddit, expressing exhaustion with the medium and doubt about whether anything he "
     "had built there was genuinely useful. The posts below document that whole arc: the "
-    "theorising, the community-building, the burnout, and the departure.\n\n"
+    "theorising, the community-building, the burnout, and the departure. The community has "
+    "continued after his departure, and Zummi has since published a paperback book.\n\n"
     "ARCHIVE PROVENANCE: The post collection was originally compiled by OilofOregano for a "
     "Reddit thread and posted to Pastebin on 2014-04-23. Pastebin later deleted it due to "
     "profanity in the original posts. It is mirrored here from an Internet Archive capture "
@@ -61,7 +62,7 @@ ABOUT_MD = """\
 
 This archive preserves the posts of **Zummi**, founder of r/sorceryofthespectacle (SotS).
 
-*r/sorceryofthespectacle* (SotS) was a community built around a synthesis of ideas that rarely appear in the same room: Guy Debord's critique of the **Society of the Spectacle**, Platonic and Neoplatonic philosophy, Marshall McLuhan's media theory, Gnostic theology, cybernetics, and Western occultism. The premise is that the spectacle is not merely a political or economic condition but a magical one, and that understanding it requires tools drawn from across that full range of traditions.
+*r/sorceryofthespectacle* (SotS) is a community for philosophical discussion of what the subreddit itself calls **Academocculture** — the overlap of critical theory, occultism, and the study of media and power. Its starting point is Guy Debord's *Society of the Spectacle*: the idea that contemporary culture is a "self-mutating proteum of semantics" that combines agency-robbing fantasy with instantaneous technological dissemination. The "sorcery" in the name is not merely metaphorical — the community treats the spectacle as a genuinely magical phenomenon, drawing on works like Daniel O'Keefe's *Stolen Lightning* (a social theory of magic) and the CCRU lineage (Nick Land, Reza Negarestani) alongside Debord, Rancière, Deleuze & Guattari, and Platonic and Gnostic philosophy. A recurring preoccupation is the Kali Yuga framing: whether the cascading failures of contemporary institutions are error, strategy, or built into the structure of things.
 
 Zummi was the community's founder and its most prolific voice. Over several years of posts he developed a recognisable intellectual project: tracing the alphabet as the origin of externalized memory and therefore of culture itself; reading the history of philosophy as a progression from myth (body, image, oral culture) toward logos (text, abstraction, literacy); identifying cybernetics and social media as the unconscious rediscovery and inversion of archaic magical structures. At the centre of it was always the question of what the spectacle does to consciousness, and whether there is any exit.
 
