@@ -3,7 +3,7 @@ title: Browse Archive
 layout: page
 ---
 
-[← About & Downloads](./)
+[← About & Downloads]({{ "/" | relative_url }})
 
 *676 numbered blocks — 214 substantial (≥ 500 chars) listed below.*
 
