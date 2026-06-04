@@ -20,6 +20,10 @@ The post collection was originally compiled by [OilofOregano](https://www.reddit
 * [r/zummi](https://www.reddit.com/r/zummi) — community dedicated to Zummi's work
 * [Source on GitHub](https://github.com/SorceryOfTheSpectacle/zummiArchive)
 
+**Download the archive:**
+* [zummi-archive.txt](downloads/zummi-archive.txt) — plain text (UTF-8)
+* [zummi-archive.pdf](downloads/zummi-archive.pdf) — formatted PDF
+
 If you are interested in contributing to this archive, post to the [issue tracker](https://github.com/SorceryOfTheSpectacle/zummiArchive/issues) to request access, or send a pull request.
 
 ---
