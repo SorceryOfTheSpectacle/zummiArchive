@@ -1,18 +1,32 @@
 # Zummi Archive
 
-This post collection was originally created by [OilofOregano](https://www.reddit.com/user/OilofOregano) for this [reddit thread](https://www.reddit.com/r/sorceryofthespectacle/comments/8okqrm/every_single_one_of_zummis_posts/) however this pastebin post was deleted by pastebin because of swearwords in zummi's old post.
+## About This Archive
 
-In the interest of preservation it is now also mirrored here based on the capture from internet archive.
+This is a preservation archive of posts by **Zummi**, the founder of [r/sorceryofthespectacle](https://www.reddit.com/r/sorceryofthespectacle).
 
-* [Every Single One of Zummi's Posts (Web Archive)(Posted On Pastebin 2014-04-23)](http://web.archive.org/web/20190606033621/https://pastebin.com/dtNG4LKg)
+### Sorcery of the Spectacle
 
-* [Original Subreddit For Sorcery Of The Spectacle that Zummi created](https://www.reddit.com/r/sorceryofthespectacle)
+*r/sorceryofthespectacle* (SotS) was a community built around a synthesis of ideas that rarely appear in the same room: Guy Debord's critique of the **Society of the Spectacle**, Platonic and Neoplatonic philosophy, Marshall McLuhan's media theory, Gnostic theology, cybernetics, and Western occultism. The premise — roughly — is that the spectacle is not merely a political or economic condition but a magical one, and that understanding it requires tools drawn from across that full range of traditions.
 
-* [Cult of Zummi](https://www.reddit.com/r/zummi)
+Zummi was the community's founder and its most prolific voice. Over several years of posts he developed a recognisable intellectual project: tracing the alphabet as the origin of externalized memory and therefore of culture itself; reading the history of philosophy as a progression from myth (body, image, oral culture) toward logos (text, abstraction, literacy); identifying cybernetics and social media as the unconscious rediscovery — and inversion — of archaic magical structures. At the centre of it was always the question of what the spectacle *does* to consciousness, and whether there is any exit.
 
-If you are interested in contributing to this archive, then post to [this issue tracker](https://github.com/SorceryOfTheSpectacle/zummiArchive/issues) to request access, or send a pull request.
+Zummi eventually stepped back from moderation and publicly distanced himself from the subreddit, expressing exhaustion with the medium and doubt about whether anything he had built there was genuinely useful. The posts below document that whole arc — the theorising, the community-building, the burnout, and the departure.
+
+### This Archive
+
+The post collection was originally compiled by [OilofOregano](https://www.reddit.com/user/OilofOregano) for this [Reddit thread](https://www.reddit.com/r/sorceryofthespectacle/comments/8okqrm/every_single_one_of_zummis_posts/) and posted to Pastebin on 2014-04-23. Pastebin later deleted it due to profanity in the original posts. It is mirrored here from an [Internet Archive capture](http://web.archive.org/web/20190606033621/https://pastebin.com/dtNG4LKg) in the interest of preservation.
+
+* [r/sorceryofthespectacle](https://www.reddit.com/r/sorceryofthespectacle) — the original subreddit Zummi created
+* [r/zummi](https://www.reddit.com/r/zummi) — community dedicated to Zummi's work
+* [Source on GitHub](https://github.com/SorceryOfTheSpectacle/zummiArchive)
+
+If you are interested in contributing to this archive, post to the [issue tracker](https://github.com/SorceryOfTheSpectacle/zummiArchive/issues) to request access, or send a pull request.
+
+---
 
 ## Every Single One of Zummi's Posts (Posted On Pastebin 2014-04-23)
+
+*The following text is preserved verbatim from the original pastebin. Spelling, punctuation, capitalisation, and formatting are reproduced exactly as written.*
 
 It’s cool walker I’m just profoundly burned out and everything is a facade, no one has any answers I’m exhausted and I truly am just struck dumb at the impasse of myself and the world I seriously don’t know what the fuck we are doing and yet we have all our creature comforts met I’m blaming myself but I’m also offering a warning for people which I think should be taken seriously. I’ve gained nothing from philosophy, critical theory, comparative religion, cybernetics, Marxism etc other than achieving a calculated distance from myself and others and learned how to take things apart and identify exploits in the world that I’m too ethical to employ myself yet I am locked in the sway of the zoo parade of exploited dopes everywhere I go and I just want some gawdamn rest and I don’t know where to get it. Idiots like aminom are fed by places like this and 4chan and telegram and it’s the net gain seems to be dissociation and now I feel deeply dissociated and I recognize it in most everyone around me but look at all the stuff we have and look how pretty and cool and free we are and so on. It’s just like being slapped in the face I guess. To realize that I’ve gained nothing of value from any of it not just this subreddit the entire so called knowledge economy. It’s all atomistic isolation and narcissism and mania. Anyways peace I’m tired I’m just burned out on all of it. Telegram too. For a long time I thought I was going somewhere getting something done and I didn’t. People like aminom creep me out and places like this are not necessarily part of the problem it’s just that the mania and schizo stuff gets to me. Mostly Becuase at one point I thought I had answers to those issues for myself and by extension for others I don’t. I wasted my time I think. I could’ve done something else. I’m not claiming superiority I’m saying I’m a failure my life has been made worse by the thing that I was doing that I thought would make it better. You can say whatever you want to me about me about whatever it’s what you seem to do best anyways is complain. This isn’t a community telegrams not a community the internet is not a community quoting Zizek paraphrasing Lacan is not impressive etc. I don’t sit around and complain like you Walker I don’t normally spend my time focusing on the negative and anyone on the Telegram or reading my post history will show that. I’m simply publicly venting for having been so foolish and wasted so much effort for nothing. Not Becuase I didn’t save someone’s soul or anything else other than I wanted to say I’m wrong I’ve made a mistake and I don’t know how to correct for it. I have a world I “see” with my ideas and notions and the world I live in and they don’t actually correlate or rather knowing that the spectacle
 Is real there is some kind of paranoia-animism generating a devolutionary global current and then having that constantly reinforced gives me no satisfaction. There is no solution. That’s all. I am not a professor or An academic nor a clinician so I’m free to have disorganized ideas. Ebert is right though mass media is an extinction level event and I think that’s what I wanted to inoculate myself (and others against) and I just don’t think it’s possible. There is nothing more humbling than this. I think more than anything I’m simply sad and jealous that I can no longer muster the delusional mania to pretend that everything is ok. So maybe I shoild espouse your notions of operationalizing suicidal ideation and illness perhaps that will give me some juice to get out of bed. I’m

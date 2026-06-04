@@ -1,0 +1,12 @@
+title: Zummi Archive
+description: >-
+  A preservation archive of posts by Zummi, founder of r/sorceryofthespectacle —
+  a community at the intersection of spectacle theory, Platonic philosophy,
+  media theory, Gnosticism, and cybernetics.
+theme: minima
+
+minima:
+  skin: classic
+
+header_pages:
+  - index.md
