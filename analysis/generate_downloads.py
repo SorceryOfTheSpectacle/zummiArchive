@@ -392,7 +392,7 @@ def generate_web(blocks: list[str]) -> None:
         'layout: page',
         '---',
         '',
-        '[← About & Downloads](./)',
+        '[← About & Downloads]({{ "/" | relative_url }})',
         '',
         (f'*{len(blocks)} numbered blocks — '
          f'{len(toc_entries)} substantial (≥ 500 chars) listed below.*'),
