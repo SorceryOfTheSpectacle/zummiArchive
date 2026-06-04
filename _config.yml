@@ -10,3 +10,4 @@ minima:
 
 header_pages:
   - index.md
+  - browse.md

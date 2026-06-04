@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-Generate downloadable TXT, MD, and PDF versions of the Zummi Archive.
+Generate downloadable TXT, MD, and PDF versions of the Zummi Archive,
+plus browse.md — the Jekyll browsing page with ToC and per-block anchors.
 Run from repo root: python3 analysis/generate_downloads.py
-Output: downloads/zummi-archive.txt, .md, .pdf
+Output: downloads/zummi-archive.txt, .md, .pdf  and  browse.md
 """
 
 import html
@@ -372,6 +373,65 @@ def generate_pdf(blocks: list[str]) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Web (browse.md)
+# ---------------------------------------------------------------------------
+
+def generate_web(blocks: list[str]) -> None:
+    """Generate browse.md — Jekyll page with collapsible ToC and per-block anchors."""
+    import html as html_mod
+
+    toc_entries = [
+        (i, toc_title(b, max_len=80))
+        for i, b in enumerate(blocks, 1)
+        if len(b) >= TOC_MIN_CHARS
+    ]
+
+    lines = [
+        '---',
+        'title: Browse Archive',
+        'layout: page',
+        '---',
+        '',
+        '[← About & Downloads](./)',
+        '',
+        (f'*{len(blocks)} numbered blocks — '
+         f'{len(toc_entries)} substantial (≥ 500 chars) listed below.*'),
+        '',
+        '<details>',
+        f'<summary>Table of Contents — {len(toc_entries)} entries</summary>',
+        '<div markdown="0" style="max-height:55vh;overflow-y:scroll;'
+        'padding:0.4em 0 0.4em 0.6em">',
+    ]
+
+    for num, title in toc_entries:
+        safe = html_mod.escape(title)
+        lines.append(
+            f'<p style="margin:0.1em 0;font-size:0.85em">'
+            f'<a href="#b{num}">[{num}]</a> {safe}</p>'
+        )
+
+    lines += [
+        '</div>',
+        '</details>',
+        '',
+        '---',
+        '',
+        f'*{VERBATIM_NOTE}*',
+        '',
+    ]
+
+    for i, block in enumerate(blocks, 1):
+        lines.append(f'<a id="b{i}"></a>')
+        lines.append('')
+        lines.append(block)
+        lines.append('')
+
+    out = Path('browse.md')
+    out.write_text('\n'.join(lines), encoding='utf-8')
+    print(f'  {out}  ({out.stat().st_size:,} bytes)')
+
+
+# ---------------------------------------------------------------------------
 
 def main() -> None:
     DOWNLOADS.mkdir(exist_ok=True)
@@ -381,6 +441,7 @@ def main() -> None:
     generate_md(blocks)
     generate_txt(blocks)
     generate_pdf(blocks)
+    generate_web(blocks)
     print("Done.")
 
 
