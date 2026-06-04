@@ -46,56 +46,80 @@ ABOUT = (
 
 VERBATIM_NOTE = (
     "The following text is preserved verbatim from the original pastebin. "
-    "Spelling, punctuation, capitalisation, and formatting are reproduced exactly as written."
+    "Spelling, punctuation, capitalisation, and formatting are reproduced exactly as written. "
+    "Each paragraph block is numbered [N] for reference. Blocks of 500+ characters are "
+    "listed in the Table of Contents."
 )
+
+# Blocks at or above this character length get a ToC entry.
+TOC_MIN_CHARS = 500
+
+
+def load_blocks() -> list[str]:
+    """Split archive on blank lines; return non-empty stripped blocks."""
+    text = ARCHIVE.read_text(encoding="utf-8", errors="replace")
+    return [b.strip() for b in text.split("\n\n") if b.strip()]
 
 
 def strip_markdown(text: str) -> str:
     text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)  # [text](url) -> text
     text = re.sub(r'&amp;', '&', text)
     text = re.sub(r'&[a-z]+;', ' ', text)
-    text = re.sub(r'\*+([^\*]+)\*+', r'\1', text)          # *bold* / **bold**
-    text = re.sub(r'`([^`]+)`', r'\1', text)               # `code`
+    text = re.sub(r'\*+([^\*]+)\*+', r'\1', text)           # *bold* / **bold**
+    text = re.sub(r'`([^`]+)`', r'\1', text)                # `code`
     return text
 
 
+def toc_title(block: str, max_len: int = 72) -> str:
+    """First line of a block, truncated, as a ToC label."""
+    first = block.split("\n")[0].strip()
+    first = strip_markdown(first)
+    if len(first) > max_len:
+        first = first[:max_len].rstrip() + "..."
+    return first
+
+
 def normalise_for_pdf(text: str) -> str:
-    """Replace Unicode characters that ReportLab's built-in fonts can't render."""
+    """Replace Unicode characters that ReportLab built-in fonts can't render."""
     replacements = {
-        '—': '--',   # em dash
-        '–': '-',    # en dash
-        '‘': "'",    # left single quote
-        '’': "'",    # right single quote
-        '“': '"',    # left double quote
-        '”': '"',    # right double quote
+        '—': '--',  # em dash
+        '–': '-',   # en dash
+        '‘': "'",   # left single quote
+        '’': "'",   # right single quote
+        '“': '"',   # left double quote
+        '”': '"',   # right double quote
         '…': '...',  # ellipsis
-        'ö': 'o',    # o-umlaut (Godel)
-        'é': 'e',    # e-acute
-        'è': 'e',    # e-grave
-        'à': 'a',    # a-grave
-        'â': 'a',    # a-circumflex
-        'û': 'u',    # u-circumflex
-        'î': 'i',    # i-circumflex
-        'ç': 'c',    # c-cedilla
-        'ü': 'u',    # u-umlaut
-        'ä': 'a',    # a-umlaut
-        'ß': 'ss',   # sharp s
-        '´': "'",    # acute accent
-        ' ': ' ',    # non-breaking space
-        '•': '*',    # bullet
-        '→': '->',   # right arrow
+        '\xf6': 'o',     # o-umlaut
+        '\xe9': 'e',     # e-acute
+        '\xe8': 'e',     # e-grave
+        '\xe0': 'a',     # a-grave
+        '\xe2': 'a',     # a-circumflex
+        '\xfb': 'u',     # u-circumflex
+        '\xee': 'i',     # i-circumflex
+        '\xe7': 'c',     # c-cedilla
+        '\xfc': 'u',     # u-umlaut
+        '\xe4': 'a',     # a-umlaut
+        '\xdf': 'ss',    # sharp s
+        '´': "'",   # acute accent
+        ' ': ' ',   # non-breaking space
+        '•': '*',   # bullet
+        '→': '->',  # right arrow
+        'α': 'alpha',
+        'β': 'beta',
+        'γ': 'gamma',
     }
     for char, replacement in replacements.items():
         text = text.replace(char, replacement)
-    # Drop anything still outside latin-1
     return text.encode('latin-1', errors='replace').decode('latin-1')
 
 
-def generate_txt() -> None:
-    archive = ARCHIVE.read_text(encoding="utf-8", errors="replace")
-    archive = strip_markdown(archive).strip()
+# ---------------------------------------------------------------------------
+# TXT
+# ---------------------------------------------------------------------------
 
-    separator = "-" * 72
+def generate_txt(blocks: list[str]) -> None:
+    sep72 = "-" * 72
+
     parts = [
         TITLE,
         "=" * len(TITLE),
@@ -103,33 +127,62 @@ def generate_txt() -> None:
         SUBTITLE,
         COMPILED,
         "",
-        separator,
+        sep72,
         "",
         "ABOUT THIS ARCHIVE",
         "",
         ABOUT,
         "",
-        separator,
+        sep72,
+        "",
+        "TABLE OF CONTENTS",
+        "(blocks >= 500 characters)",
+        "",
+    ]
+
+    # ToC
+    for i, block in enumerate(blocks, 1):
+        if len(block) >= TOC_MIN_CHARS:
+            title = toc_title(strip_markdown(block))
+            parts.append(f"  [{i:3d}]  {title}")
+
+    parts += [
+        "",
+        sep72,
         "",
         "ARCHIVE CONTENT",
         "",
         VERBATIM_NOTE,
         "",
-        archive,
-        "",
     ]
+
+    # Content
+    for i, block in enumerate(blocks, 1):
+        parts.append(f"[{i}]")
+        parts.append(strip_markdown(block))
+        parts.append("")
+
     out = DOWNLOADS / "zummi-archive.txt"
     out.write_text("\n".join(parts), encoding="utf-8")
     print(f"  {out}  ({out.stat().st_size:,} bytes)")
 
 
-def generate_pdf() -> None:
+# ---------------------------------------------------------------------------
+# PDF
+# ---------------------------------------------------------------------------
+
+def generate_pdf(blocks: list[str]) -> None:
+    from reportlab.lib.colors import Color, HexColor
     from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
     from reportlab.lib.units import cm
     from reportlab.platypus import (HRFlowable, PageBreak, Paragraph,
                                     SimpleDocTemplate, Spacer)
+    from reportlab.platypus.tableofcontents import TableOfContents
+
+    grey = HexColor('#888888')
+    light_grey = HexColor('#bbbbbb')
 
     out = DOWNLOADS / "zummi-archive.pdf"
 
@@ -151,20 +204,31 @@ def generate_pdf() -> None:
                               fontSize=26, spaceAfter=10, alignment=TA_CENTER)
     s_sub = ParagraphStyle("ZSub", parent=styles["Normal"],
                             fontSize=11, spaceAfter=4, alignment=TA_CENTER,
-                            textColor=(0.45, 0.45, 0.45))
+                            textColor=grey)
     s_h2 = ParagraphStyle("ZH2", parent=styles["Heading2"],
                            fontSize=13, spaceBefore=20, spaceAfter=8)
     s_body = ParagraphStyle("ZBody", parent=styles["Normal"],
-                             fontSize=10, leading=15, spaceAfter=8,
+                             fontSize=10, leading=15, spaceAfter=6,
                              alignment=TA_JUSTIFY)
     s_note = ParagraphStyle("ZNote", parent=s_body,
-                             fontSize=9, textColor=(0.4, 0.4, 0.4))
+                             fontSize=9, textColor=grey)
+    # Label style: small grey number shown before each block
+    s_label = ParagraphStyle("ZLabel", parent=styles["Normal"],
+                              fontSize=7.5, textColor=grey,
+                              spaceBefore=10, spaceAfter=2,
+                              leading=10)
+    # ToC entry style
+    s_toc = ParagraphStyle("ZToc", parent=styles["Normal"],
+                            fontSize=9, leading=13, spaceAfter=2)
+    s_toc_head = ParagraphStyle("ZTocHead", parent=s_h2,
+                                 fontSize=13, spaceBefore=0, spaceAfter=12)
 
     def e(s: str) -> str:
         return html.escape(normalise_for_pdf(s))
 
-    def hr():
-        return HRFlowable(width="100%", thickness=0.5, spaceAfter=6)
+    def thin_rule():
+        return HRFlowable(width="100%", thickness=0.3,
+                          color=light_grey, spaceAfter=4, spaceBefore=0)
 
     story = []
 
@@ -175,7 +239,7 @@ def generate_pdf() -> None:
     story.append(Paragraph(e(SUBTITLE), s_sub))
     story.append(Paragraph(e(COMPILED), s_sub))
     story.append(Spacer(1, 1.5 * cm))
-    story.append(hr())
+    story.append(HRFlowable(width="100%", thickness=0.5, spaceAfter=6))
     story.append(PageBreak())
 
     # ---- About section ----
@@ -183,31 +247,65 @@ def generate_pdf() -> None:
     for para in ABOUT.split("\n\n"):
         story.append(Paragraph(e(para.replace("\n", " ")), s_body))
     story.append(Spacer(1, 0.5 * cm))
-    story.append(hr())
+    story.append(HRFlowable(width="100%", thickness=0.5, spaceAfter=6))
+    story.append(PageBreak())
+
+    # ---- Table of Contents ----
+    toc_entries = [(i, toc_title(strip_markdown(b)))
+                   for i, b in enumerate(blocks, 1)
+                   if len(b) >= TOC_MIN_CHARS]
+
+    story.append(Paragraph("Table of Contents", s_toc_head))
+    story.append(Paragraph(
+        f"<i>Listing {len(toc_entries)} blocks of 500+ characters "
+        f"(out of {len(blocks)} total blocks). "
+        f"Block numbers [N] are shown in the text.</i>",
+        s_note,
+    ))
+    story.append(Spacer(1, 0.3 * cm))
+    for num, title in toc_entries:
+        story.append(Paragraph(
+            f'<font color="#888888">[{num}]</font>  {e(title)}',
+            s_toc,
+        ))
     story.append(PageBreak())
 
     # ---- Archive content ----
     story.append(Paragraph("Archive Content", s_h2))
     story.append(Paragraph(f"<i>{e(VERBATIM_NOTE)}</i>", s_note))
-    story.append(Spacer(1, 0.4 * cm))
+    story.append(Spacer(1, 0.5 * cm))
 
-    archive = ARCHIVE.read_text(encoding="utf-8", errors="replace")
-    archive = strip_markdown(archive).strip()
+    for i, block in enumerate(blocks, 1):
+        clean = strip_markdown(block)
 
-    for para in archive.split("\n\n"):
-        para = para.strip().replace("\n", " ")
-        if para:
-            story.append(Paragraph(e(para), s_body))
+        # Separator rule before each block (skip first)
+        if i > 1:
+            story.append(thin_rule())
+
+        # Block number label
+        story.append(Paragraph(f"[{i}]", s_label))
+
+        # Content — preserve internal newlines as separate paragraphs
+        paras = [p.strip().replace("\n", " ") for p in clean.split("\n\n") if p.strip()]
+        if not paras:
+            paras = [clean.replace("\n", " ").strip()]
+        for p in paras:
+            if p:
+                story.append(Paragraph(e(p), s_body))
 
     doc.build(story)
     print(f"  {out}  ({out.stat().st_size:,} bytes)")
 
 
+# ---------------------------------------------------------------------------
+
 def main() -> None:
     DOWNLOADS.mkdir(exist_ok=True)
+    blocks = load_blocks()
+    print(f"Loaded {len(blocks)} blocks from archive.")
     print("Generating downloads...")
-    generate_txt()
-    generate_pdf()
+    generate_txt(blocks)
+    generate_pdf(blocks)
     print("Done.")
 
 
