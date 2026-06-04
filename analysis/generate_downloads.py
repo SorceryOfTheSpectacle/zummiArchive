@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Generate downloadable TXT and PDF versions of the Zummi Archive.
+Generate downloadable TXT, MD, and PDF versions of the Zummi Archive.
 Run from repo root: python3 analysis/generate_downloads.py
-Output: downloads/zummi-archive.txt, downloads/zummi-archive.pdf
+Output: downloads/zummi-archive.txt, .md, .pdf
 """
 
 import html
@@ -50,6 +50,30 @@ VERBATIM_NOTE = (
     "Each paragraph block is numbered [N] for reference. Blocks of 500+ characters are "
     "listed in the Table of Contents."
 )
+
+# Markdown version of the about section (used in .md output header)
+ABOUT_MD = """\
+# Zummi Archive
+
+*Every Single One of Zummi's Posts — compiled by OilofOregano, Pastebin 2014-04-23*
+
+## About This Archive
+
+This archive preserves the posts of **Zummi**, founder of r/sorceryofthespectacle (SotS).
+
+*r/sorceryofthespectacle* (SotS) was a community built around a synthesis of ideas that rarely appear in the same room: Guy Debord's critique of the **Society of the Spectacle**, Platonic and Neoplatonic philosophy, Marshall McLuhan's media theory, Gnostic theology, cybernetics, and Western occultism. The premise is that the spectacle is not merely a political or economic condition but a magical one, and that understanding it requires tools drawn from across that full range of traditions.
+
+Zummi was the community's founder and its most prolific voice. Over several years of posts he developed a recognisable intellectual project: tracing the alphabet as the origin of externalized memory and therefore of culture itself; reading the history of philosophy as a progression from myth (body, image, oral culture) toward logos (text, abstraction, literacy); identifying cybernetics and social media as the unconscious rediscovery and inversion of archaic magical structures. At the centre of it was always the question of what the spectacle does to consciousness, and whether there is any exit.
+
+Zummi eventually stepped back from moderation and publicly distanced himself from the subreddit, expressing exhaustion with the medium and doubt about whether anything he had built there was genuinely useful. The posts below document that whole arc: the theorising, the community-building, the burnout, and the departure.
+
+**Archive provenance:** Originally compiled by [OilofOregano](https://www.reddit.com/user/OilofOregano) and posted to Pastebin on 2014-04-23. Pastebin later deleted it due to profanity. Mirrored here from an [Internet Archive capture](http://web.archive.org/web/20190606033621/https://pastebin.com/dtNG4LKg) in the interest of preservation. Zummi's spelling, punctuation, capitalisation, and formatting are reproduced exactly as written.
+
+- Online: <https://sorceryofthespectacle.github.io/zummiArchive/>
+- Source: <https://github.com/SorceryOfTheSpectacle/zummiArchive>
+
+---\
+"""
 
 # Blocks at or above this character length get a ToC entry.
 TOC_MIN_CHARS = 500
@@ -111,6 +135,38 @@ def normalise_for_pdf(text: str) -> str:
     for char, replacement in replacements.items():
         text = text.replace(char, replacement)
     return text.encode('latin-1', errors='replace').decode('latin-1')
+
+
+# ---------------------------------------------------------------------------
+# MD
+# ---------------------------------------------------------------------------
+
+def generate_md(blocks: list[str]) -> None:
+    toc_entries = [(i, toc_title(b)) for i, b in enumerate(blocks, 1)
+                   if len(b) >= TOC_MIN_CHARS]
+
+    parts = [ABOUT_MD, ""]
+
+    # ToC
+    parts.append("## Table of Contents")
+    parts.append(f"*{len(toc_entries)} blocks of 500+ characters "
+                 f"(of {len(blocks)} total). Block numbers shown as `[N]` in the text.*\n")
+    for num, title in toc_entries:
+        parts.append(f"- `[{num}]` {title}")
+
+    parts += ["", "---", "", "## Archive Content", ""]
+    parts.append(f"*{VERBATIM_NOTE}*\n")
+
+    # Content — original text verbatim; block numbers as HTML comments so
+    # they're invisible when rendered but present in the raw file.
+    for i, block in enumerate(blocks, 1):
+        parts.append(f"<!-- [{i}] -->")
+        parts.append(block)
+        parts.append("")
+
+    out = DOWNLOADS / "zummi-archive.md"
+    out.write_text("\n".join(parts), encoding="utf-8")
+    print(f"  {out}  ({out.stat().st_size:,} bytes)")
 
 
 # ---------------------------------------------------------------------------
@@ -304,6 +360,7 @@ def main() -> None:
     blocks = load_blocks()
     print(f"Loaded {len(blocks)} blocks from archive.")
     print("Generating downloads...")
+    generate_md(blocks)
     generate_txt(blocks)
     generate_pdf(blocks)
     print("Done.")
