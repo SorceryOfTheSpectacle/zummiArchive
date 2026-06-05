@@ -111,6 +111,18 @@ THEMES = [
 ]
 THEME_MIN_DENSITY = 1.0  # keyword hits per 1000 chars
 
+THEME_SLUGS = {
+    "Spectacle & Society":     "spectacle",
+    "Alphabet & Memory":       "alphabet",
+    "Gnosticism & Occult":     "occult",
+    "Cybernetics & Recursion": "cyber",
+    "Platonism & Philosophy":  "plato",
+    "Critical Theory":         "critical",
+    "Media & Technology":      "media",
+    "Myth & Archetype":        "myth",
+    "Community & Meta":        "meta",
+}
+
 
 def tag_blocks(blocks: list[str]) -> dict[str, list[int]]:
     """Return {theme_name: [block_nums]} for substantial blocks scoring above density threshold."""
@@ -462,15 +474,27 @@ def generate_web(blocks: list[str]) -> None:
         )
     lines += ['</div>', '</details>', '', '---', '', f'*{VERBATIM_NOTE}*', '']
 
-    # --- Archive content with inline § permalinks ---
+    # Reverse map: block number → ordered list of theme names
+    block_tags: dict[int, list[str]] = {}
+    for name, nums in theme_map.items():
+        for n in nums:
+            block_tags.setdefault(n, []).append(name)
+
+    # --- Archive content with inline § permalinks and theme chips ---
     for i, block in enumerate(blocks, 1):
         ref = f'<a id="b{i}" href="#b{i}" class="block-ref">§ {i}</a>'
-        # Prepend the permalink inline with the first line of the block
+        chips = ''
+        if i in block_tags:
+            chips = ' ' + ''.join(
+                f'<span class="tag-chip tc-{THEME_SLUGS[t]}">{html_mod.escape(t)}</span>'
+                for t in block_tags[i]
+            )
+        # Prepend the permalink (and any chips) inline with the first line of the block
         nl = block.find('\n')
         if nl == -1:
-            lines.append(ref + ' ' + block)
+            lines.append(ref + chips + ' ' + block)
         else:
-            lines.append(ref + ' ' + block[:nl] + block[nl:])
+            lines.append(ref + chips + ' ' + block[:nl] + block[nl:])
         lines.append('')
 
     out = Path('browse.md')
