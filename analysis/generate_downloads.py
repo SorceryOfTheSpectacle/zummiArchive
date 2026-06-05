@@ -97,6 +97,35 @@ Zummi eventually stepped back from moderation and publicly distanced himself fro
 # Blocks at or above this character length get a ToC entry.
 TOC_MIN_CHARS = 500
 
+# Thematic groupings for the browse page index.
+THEMES = [
+    ("Spectacle & Society",     ["spectacle", "debord", "ideology", "baudrillard", "commodity", "spectacular"]),
+    ("Alphabet & Memory",       ["alphabet", "externalized", "literacy", "oral", "phonetic", "vowel", "syllabary", "mnemonic"]),
+    ("Gnosticism & Occult",     ["gnostic", "occult", "magic", "alchemy", "hermetic", "crowley", "esoteric", "mystical"]),
+    ("Cybernetics & Recursion", ["cybernetics", "cybernetic", "recursion", "recursive", "enantiodromia", "feedback"]),
+    ("Platonism & Philosophy",  ["plato", "platonic", "neoplatonism", "aristotle", "philosophical", "pre-socratic"]),
+    ("Critical Theory",         ["marxist", "capitalism", "capitalist", "lacan", "deleuze", "foucault", "adorno", "benjamin", "zizek", "hegel"]),
+    ("Media & Technology",      ["mcluhan", "television", "advertising", "technology", "digital", "dopamine", "internet", "medium is"]),
+    ("Myth & Archetype",        ["mytholog", "archetype", "archetypal", "jung", "ritual", "symbol", "theology"]),
+    ("Community & Meta",        ["this sub", "subreddit", "telegram", "aminom", "r/sorcery", "this place"]),
+]
+THEME_MIN_DENSITY = 1.0  # keyword hits per 1000 chars
+
+
+def tag_blocks(blocks: list[str]) -> dict[str, list[int]]:
+    """Return {theme_name: [block_nums]} for substantial blocks scoring above density threshold."""
+    theme_map: dict[str, list[int]] = {name: [] for name, _ in THEMES}
+    for i, block in enumerate(blocks, 1):
+        if len(block) < TOC_MIN_CHARS:
+            continue
+        bl = block.lower()
+        density_base = len(block) / 1000
+        for name, keywords in THEMES:
+            hits = sum(bl.count(kw) for kw in keywords)
+            if hits / density_base >= THEME_MIN_DENSITY:
+                theme_map[name].append(i)
+    return theme_map
+
 
 def load_blocks() -> list[str]:
     """Split archive on blank lines; return non-empty stripped blocks."""
@@ -377,7 +406,7 @@ def generate_pdf(blocks: list[str]) -> None:
 # ---------------------------------------------------------------------------
 
 def generate_web(blocks: list[str]) -> None:
-    """Generate browse.md — Jekyll page with collapsible ToC and per-block anchors."""
+    """Generate browse.md — Jekyll page with thematic index, numeric ToC, and per-block permalinks."""
     import html as html_mod
 
     toc_entries = [
@@ -385,6 +414,8 @@ def generate_web(blocks: list[str]) -> None:
         for i, b in enumerate(blocks, 1)
         if len(b) >= TOC_MIN_CHARS
     ]
+
+    theme_map = tag_blocks(blocks)
 
     lines = [
         '---',
@@ -394,36 +425,52 @@ def generate_web(blocks: list[str]) -> None:
         '',
         '[← About & Downloads]({{ "/" | relative_url }})',
         '',
-        (f'*{len(blocks)} numbered blocks — '
-         f'{len(toc_entries)} substantial (≥ 500 chars) listed below.*'),
+        (f'*{len(blocks)} numbered blocks. Each block has a § permalink; '
+         f'{len(toc_entries)} substantial blocks listed in contents below.*'),
         '',
+    ]
+
+    # --- Thematic index ---
+    lines += [
         '<details>',
-        f'<summary>Table of Contents — {len(toc_entries)} entries</summary>',
+        '<summary>Browse by Theme</summary>',
+        '<div markdown="0" style="max-height:55vh;overflow-y:scroll;'
+        'padding:0.5em 0 0.5em 0.6em">',
+    ]
+    for name, nums in theme_map.items():
+        if not nums:
+            continue
+        links = ', '.join(f'<a href="#b{n}">{n}</a>' for n in nums)
+        lines.append(
+            f'<p style="margin:0.25em 0;font-size:0.85em">'
+            f'<strong>{html_mod.escape(name)}</strong> — {links}</p>'
+        )
+    lines += ['</div>', '</details>', '']
+
+    # --- Numeric ToC ---
+    lines += [
+        '<details>',
+        f'<summary>Table of Contents — {len(toc_entries)} entries (by block number)</summary>',
         '<div markdown="0" style="max-height:55vh;overflow-y:scroll;'
         'padding:0.4em 0 0.4em 0.6em">',
     ]
-
     for num, title in toc_entries:
         safe = html_mod.escape(title)
         lines.append(
             f'<p style="margin:0.1em 0;font-size:0.85em">'
             f'<a href="#b{num}">[{num}]</a> {safe}</p>'
         )
+    lines += ['</div>', '</details>', '', '---', '', f'*{VERBATIM_NOTE}*', '']
 
-    lines += [
-        '</div>',
-        '</details>',
-        '',
-        '---',
-        '',
-        f'*{VERBATIM_NOTE}*',
-        '',
-    ]
-
+    # --- Archive content with inline § permalinks ---
     for i, block in enumerate(blocks, 1):
-        lines.append(f'<a id="b{i}"></a>')
-        lines.append('')
-        lines.append(block)
+        ref = f'<a id="b{i}" href="#b{i}" class="block-ref">§ {i}</a>'
+        # Prepend the permalink inline with the first line of the block
+        nl = block.find('\n')
+        if nl == -1:
+            lines.append(ref + ' ' + block)
+        else:
+            lines.append(ref + ' ' + block[:nl] + block[nl:])
         lines.append('')
 
     out = Path('browse.md')
